@@ -275,7 +275,7 @@ st.title("AIF Converter")
 add_spacelines(3)
 
 
-maps = glob.glob("/maps/*.json")
+maps = glob.glob(r"/maps/*.json")
 
 directory = "tem_maps"
 parent_dir = "/"
@@ -303,15 +303,15 @@ with st.sidebar:
             if len(uploaded_json) < 1:
                 st.stop()
             elif len(uploaded_json) > 1:
-                maps = glob.glob("/maps_up/*.json")
+                maps = glob.glob(r"/maps_up/*.json")
                 if len(maps) > 0:
                     for f in maps:
                         os.remove(f)
                 for file in uploaded_json:
-                  with open(os.path.join("/maps_up", file.name), "wb") as f:
+                  with open(os.path.join(r"/maps_up", file.name), "wb") as f:
                       f.write(file.getbuffer())
                       st.write(f'{file.name} saved sucessfully')
-            maps = glob.glob("/maps_up/*.json")
+            maps = glob.glob(r"/maps_up/*.json")
             df_all_loc, df_all = RetrieveNodes(maps[:], type_aif = str(type_aif).lower())
 
         elif own_files == 'Nodeset ID from AIF':
