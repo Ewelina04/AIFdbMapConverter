@@ -466,7 +466,7 @@ df_2['speaker'] = np.where(df_2['speaker'] == True, df_2['speaker_conclusion'], 
 df_2['speaker'] = np.where( (df_2['speaker'] == '') & (df_2.id_premise > df_2.id_conclusion) , df_2['speaker_premise'], df_2['speaker'])
 df_2['speaker'] = np.where( (df_2['speaker'] == '') & (df_2.id_premise < df_2.id_conclusion) , df_2['speaker_conclusion'], df_2['speaker'])
 
-df_2 = df_2.sort_values(by = ['id_connection', 'id_premise', 'id_conclusion'])
+#df_2 = df_2.sort_values(by = ['id_connection', 'id_premise', 'id_conclusion'])
 
 arg_stats = pd.DataFrame(df_2.connection.value_counts().sort_values(ascending=False)).reset_index()
 arg_stats.columns = ['Type', 'Number']
@@ -588,7 +588,7 @@ with col2_download:
     add_spacelines(2)
     df_2.argument_linked = df_2.argument_linked.astype('int')
     #st.dataframe(df_2.iloc[:, 2:].set_index('speaker').head(), width=850)
-    st.dataframe(df_2.set_index('speaker').head(), width=850)
+    st.dataframe(df_2.set_index('speaker'), width=850)
 
 
 #if own_files == 'Nodeset ID from AIF':
