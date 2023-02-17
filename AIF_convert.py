@@ -275,10 +275,10 @@ st.title("AIF Converter")
 add_spacelines(3)
 
 
-maps = glob.glob(r"C:\Users\user1\Downloads\AIFmaps_converter\maps\*.json")
+maps = glob.glob("/maps/*.json")
 
 directory = "tem_maps"
-parent_dir = "C:/Users/user1/Downloads/AIFmaps_converter/"
+parent_dir = "/"
 temp_path = os.path.join(parent_dir, directory)
 ############################################################################
 
@@ -303,15 +303,15 @@ with st.sidebar:
             if len(uploaded_json) < 1:
                 st.stop()
             elif len(uploaded_json) > 1:
-                maps = glob.glob(r"C:\Users\user1\Downloads\AIFmaps_converter\maps_up\*.json")
+                maps = glob.glob("/maps_up/*.json")
                 if len(maps) > 0:
                     for f in maps:
                         os.remove(f)
                 for file in uploaded_json:
-                  with open(os.path.join(r"C:\Users\user1\Downloads\AIFmaps_converter\maps_up", file.name), "wb") as f:
+                  with open(os.path.join("/maps_up", file.name), "wb") as f:
                       f.write(file.getbuffer())
                       st.write(f'{file.name} saved sucessfully')
-            maps = glob.glob(r"C:\Users\user1\Downloads\AIFmaps_converter\maps_up\*.json")
+            maps = glob.glob("/maps_up/*.json")
             df_all_loc, df_all = RetrieveNodes(maps[:], type_aif = str(type_aif).lower())
 
         elif own_files == 'Nodeset ID from AIF':
@@ -325,7 +325,7 @@ with st.sidebar:
                 #with open(os.path.join(temp_path, 'nodeset'+str(nodeset_id_input)+'.json'), "w") as f:
                     #json.dump(file_json_nodeset, f)
                     #st.write(f'{nodeset_id_input} saved sucessfully')
-                #maps = glob.glob(r"C:\Users\user1\Downloads\AIFmaps_converter\tem_maps\*.json")
+                #maps = glob.glob("/tem_maps/*.json")
                 df_all_loc, df_all = RetrieveNodesOnline(file_json_nodeset, nodeset_id_str = nodeset_id_input, type_aif = str(type_aif).lower())
 
 
