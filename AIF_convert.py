@@ -45,119 +45,222 @@ def get_graph_url(node_path):
 
 
 @st.cache(allow_output_mutation=True)
-def RetrieveNodes(node_list, type_aif='old'):
+def RetrieveNodes(node_list, from_dict = False, type_aif='old'):
   df_all_loc = pd.DataFrame(columns = ['locution', 'connection', 'illocution', 'id_locution', 'id_connection', 'id_illocution', 'nodeset_id'])
   df_all = pd.DataFrame(columns = ['premise', 'connection', 'conclusion', 'id_premise', 'id_connection', 'id_conclusion', 'nodeset_id'])
 
-  for map in node_list[:]:
-    try:
-      with open(map, 'r') as f:
-        map1 = json.load(f)
+  if from_dict:
+      for map in node_list.keys():
+        try:
+          match_nodeset = map
+          map1 = node_list[map]
 
-      if type_aif == 'new':
-        df_nodes = pd.DataFrame(map1['AIF']['nodes'])
-        df_edge = pd.DataFrame(map1['AIF']['edges'])
-      else:
-        df_nodes = pd.DataFrame(map1['nodes'])
-        df_edge = pd.DataFrame(map1['edges'])
+          if type_aif == 'new':
+            df_nodes = pd.DataFrame(map1['AIF']['nodes'])
+            df_edge = pd.DataFrame(map1['AIF']['edges'])
+          else:
+            df_nodes = pd.DataFrame(map1['nodes'])
+            df_edge = pd.DataFrame(map1['edges'])
 
-      tto1l = []
-      tfrom1l = []
-      tto2l = []
-      tfrom2l = []
-      connect_idsl = []
-      loc_idsl = []
-      illoc_idsl = []
-      nodeset_idsl = []
+          tto1l = []
+          tfrom1l = []
+          tto2l = []
+          tfrom2l = []
+          connect_idsl = []
+          loc_idsl = []
+          illoc_idsl = []
+          nodeset_idsl = []
 
-      match_nodeset = re.split('nodeset', str(map))
-      match_nodeset = match_nodeset[-1][:4]
+          tto1i = []
+          tfrom1i = []
+          tto2i = []
+          tfrom2i = []
+          connect_idsi = []
+          loc_idsi = []
+          illoc_idsi = []
+          nodeset_idsi = []
+          rels = ['MA', 'CA', 'RA', 'PA']
 
-      tto1i = []
-      tfrom1i = []
-      tto2i = []
-      tfrom2i = []
-      connect_idsi = []
-      loc_idsi = []
-      illoc_idsi = []
-      nodeset_idsi = []
-      rels = ['MA', 'CA', 'RA', 'PA']
+          for id1 in df_edge.index:
+            for id2 in df_edge.index:
 
-      for id1 in df_edge.index:
-        for id2 in df_edge.index:
+              id_from1 =  df_edge.loc[id1, 'fromID']
+              id_to1 =  df_edge.loc[id1, 'toID']
 
-          id_from1 =  df_edge.loc[id1, 'fromID']
-          id_to1 =  df_edge.loc[id1, 'toID']
+              id_from2 =  df_edge.loc[id2, 'fromID']
+              id_to2 =  df_edge.loc[id2, 'toID']
 
-          id_from2 =  df_edge.loc[id2, 'fromID']
-          id_to2 =  df_edge.loc[id2, 'toID']
+              if id_to1 == id_from2:
+                # locutions
+                if (df_nodes[ (df_nodes.nodeID == id_from2) ]['type'].iloc[0] == 'YA') and (df_nodes[ (df_nodes.nodeID == id_to2) ]['type'].iloc[0] == 'I')  and (df_nodes[ (df_nodes.nodeID == id_from1) ]['type'].iloc[0] == 'L'):
+                  d1 = df_nodes[ (df_nodes.nodeID == id_from1) ]
+                  d2 = df_nodes[ (df_nodes.nodeID == id_to1) ]
 
-          if id_to1 == id_from2:
-            # locutions
-            if (df_nodes[ (df_nodes.nodeID == id_from2) ]['type'].iloc[0] == 'YA') and (df_nodes[ (df_nodes.nodeID == id_to2) ]['type'].iloc[0] == 'I')  and (df_nodes[ (df_nodes.nodeID == id_from1) ]['type'].iloc[0] == 'L'):
-              d1 = df_nodes[ (df_nodes.nodeID == id_from1) ]
-              d2 = df_nodes[ (df_nodes.nodeID == id_to1) ]
+                  d11 = df_nodes[ (df_nodes.nodeID == id_from2) ]
+                  d22 = df_nodes[ (df_nodes.nodeID == id_to2) ]
 
-              d11 = df_nodes[ (df_nodes.nodeID == id_from2) ]
-              d22 = df_nodes[ (df_nodes.nodeID == id_to2) ]
+                  tto1l.append(d2['text'].iloc[0])
+                  tfrom1l.append(d1['text'].iloc[0])
 
-              tto1l.append(d2['text'].iloc[0])
-              tfrom1l.append(d1['text'].iloc[0])
+                  tto2l.append(d22['text'].iloc[0])
+                  tfrom2l.append(d11['text'].iloc[0])
 
-              tto2l.append(d22['text'].iloc[0])
-              tfrom2l.append(d11['text'].iloc[0])
+                  connect_idsl.append(id_to1)
+                  loc_idsl.append(d1['nodeID'].iloc[0])
+                  illoc_idsl.append(d22['nodeID'].iloc[0])
 
-              connect_idsl.append(id_to1)
-              loc_idsl.append(d1['nodeID'].iloc[0])
-              illoc_idsl.append(d22['nodeID'].iloc[0])
+                  nodeset_idsl.append(match_nodeset)
 
-              nodeset_idsl.append(match_nodeset)
+                # args
+                if (df_nodes[ (df_nodes.nodeID == id_to1) ]['type'].iloc[0] in rels) and (df_nodes[ (df_nodes.nodeID == id_from1) ]['type'].iloc[0] != 'YA') and (df_nodes[ (df_nodes.nodeID == id_to2) ]['type'].iloc[0] == 'I'):
+                  d1 = df_nodes[ (df_nodes.nodeID == id_from1) ]
+                  d2 = df_nodes[ (df_nodes.nodeID == id_to1) ]
 
-            # args
-            if (df_nodes[ (df_nodes.nodeID == id_to1) ]['type'].iloc[0] in rels) and (df_nodes[ (df_nodes.nodeID == id_from1) ]['type'].iloc[0] != 'YA') and (df_nodes[ (df_nodes.nodeID == id_to2) ]['type'].iloc[0] == 'I'):
-              d1 = df_nodes[ (df_nodes.nodeID == id_from1) ]
-              d2 = df_nodes[ (df_nodes.nodeID == id_to1) ]
+                  d11 = df_nodes[ (df_nodes.nodeID == id_from2) ]
+                  d22 = df_nodes[ (df_nodes.nodeID == id_to2) ]
 
-              d11 = df_nodes[ (df_nodes.nodeID == id_from2) ]
-              d22 = df_nodes[ (df_nodes.nodeID == id_to2) ]
+                  tto1i.append(d2['text'].iloc[0])
+                  tfrom1i.append(d1['text'].iloc[0])
 
-              tto1i.append(d2['text'].iloc[0])
-              tfrom1i.append(d1['text'].iloc[0])
+                  tto2i.append(d22['text'].iloc[0])
+                  tfrom2i.append(d11['text'].iloc[0])
 
-              tto2i.append(d22['text'].iloc[0])
-              tfrom2i.append(d11['text'].iloc[0])
+                  connect_idsi.append(id_to1)
+                  loc_idsi.append(d1['nodeID'].iloc[0])
+                  illoc_idsi.append(d22['nodeID'].iloc[0])
+                  nodeset_idsi.append(match_nodeset)
 
-              connect_idsi.append(id_to1)
-              loc_idsi.append(d1['nodeID'].iloc[0])
-              illoc_idsi.append(d22['nodeID'].iloc[0])
-              nodeset_idsi.append(match_nodeset)
+          df1 = pd.DataFrame({
+              'locution': tfrom1l,
+              'connection': tto1l,
+              'illocution': tto2l,
+              'id_locution': loc_idsl,
+              'id_connection': connect_idsl,
+              'id_illocution': illoc_idsl,
+              'nodeset_id': nodeset_idsl,
+          })
+          df_all_loc = pd.concat( [df_all_loc, df1], axis=0, ignore_index=True )
 
-      df1 = pd.DataFrame({
-          'locution': tfrom1l,
-          'connection': tto1l,
-          'illocution': tto2l,
-          'id_locution': loc_idsl,
-          'id_connection': connect_idsl,
-          'id_illocution': illoc_idsl,
-          'nodeset_id': nodeset_idsl,
-      })
+          df2 = pd.DataFrame({
+              'premise': tfrom1i,
+              'connection': tto1i,
+              'conclusion': tto2i,
+              'id_premise': loc_idsi,
+              'id_connection': connect_idsi,
+              'id_conclusion': illoc_idsi,
+              'nodeset_id': nodeset_idsi,
+          })
+          df_all = pd.concat( [df_all, df2], axis=0, ignore_index=True )
+        except:
+          continue
+  else:
+      for map in node_list[:]:
+        try:
+          with open(map, 'r') as f:
+            map1 = json.load(f)
+          match_nodeset = re.split('nodeset', str(map))
+          match_nodeset = match_nodeset[-1][:4]
 
-      df_all_loc = pd.concat( [df_all_loc, df1], axis=0, ignore_index=True )
+          if type_aif == 'new':
+            df_nodes = pd.DataFrame(map1['AIF']['nodes'])
+            df_edge = pd.DataFrame(map1['AIF']['edges'])
+          else:
+            df_nodes = pd.DataFrame(map1['nodes'])
+            df_edge = pd.DataFrame(map1['edges'])
 
-      df2 = pd.DataFrame({
-          'premise': tfrom1i,
-          'connection': tto1i,
-          'conclusion': tto2i,
-          'id_premise': loc_idsi,
-          'id_connection': connect_idsi,
-          'id_conclusion': illoc_idsi,
-          'nodeset_id': nodeset_idsi,
-      })
-      df_all = pd.concat( [df_all, df2], axis=0, ignore_index=True )
+          tto1l = []
+          tfrom1l = []
+          tto2l = []
+          tfrom2l = []
+          connect_idsl = []
+          loc_idsl = []
+          illoc_idsl = []
+          nodeset_idsl = []
 
-    except:
-      #print(f'Except {map} ')
-      continue
+          tto1i = []
+          tfrom1i = []
+          tto2i = []
+          tfrom2i = []
+          connect_idsi = []
+          loc_idsi = []
+          illoc_idsi = []
+          nodeset_idsi = []
+          rels = ['MA', 'CA', 'RA', 'PA']
+
+          for id1 in df_edge.index:
+            for id2 in df_edge.index:
+
+              id_from1 =  df_edge.loc[id1, 'fromID']
+              id_to1 =  df_edge.loc[id1, 'toID']
+
+              id_from2 =  df_edge.loc[id2, 'fromID']
+              id_to2 =  df_edge.loc[id2, 'toID']
+
+              if id_to1 == id_from2:
+                # locutions
+                if (df_nodes[ (df_nodes.nodeID == id_from2) ]['type'].iloc[0] == 'YA') and (df_nodes[ (df_nodes.nodeID == id_to2) ]['type'].iloc[0] == 'I')  and (df_nodes[ (df_nodes.nodeID == id_from1) ]['type'].iloc[0] == 'L'):
+                  d1 = df_nodes[ (df_nodes.nodeID == id_from1) ]
+                  d2 = df_nodes[ (df_nodes.nodeID == id_to1) ]
+
+                  d11 = df_nodes[ (df_nodes.nodeID == id_from2) ]
+                  d22 = df_nodes[ (df_nodes.nodeID == id_to2) ]
+
+                  tto1l.append(d2['text'].iloc[0])
+                  tfrom1l.append(d1['text'].iloc[0])
+
+                  tto2l.append(d22['text'].iloc[0])
+                  tfrom2l.append(d11['text'].iloc[0])
+
+                  connect_idsl.append(id_to1)
+                  loc_idsl.append(d1['nodeID'].iloc[0])
+                  illoc_idsl.append(d22['nodeID'].iloc[0])
+
+                  nodeset_idsl.append(match_nodeset)
+
+                # args
+                if (df_nodes[ (df_nodes.nodeID == id_to1) ]['type'].iloc[0] in rels) and (df_nodes[ (df_nodes.nodeID == id_from1) ]['type'].iloc[0] != 'YA') and (df_nodes[ (df_nodes.nodeID == id_to2) ]['type'].iloc[0] == 'I'):
+                  d1 = df_nodes[ (df_nodes.nodeID == id_from1) ]
+                  d2 = df_nodes[ (df_nodes.nodeID == id_to1) ]
+
+                  d11 = df_nodes[ (df_nodes.nodeID == id_from2) ]
+                  d22 = df_nodes[ (df_nodes.nodeID == id_to2) ]
+
+                  tto1i.append(d2['text'].iloc[0])
+                  tfrom1i.append(d1['text'].iloc[0])
+
+                  tto2i.append(d22['text'].iloc[0])
+                  tfrom2i.append(d11['text'].iloc[0])
+
+                  connect_idsi.append(id_to1)
+                  loc_idsi.append(d1['nodeID'].iloc[0])
+                  illoc_idsi.append(d22['nodeID'].iloc[0])
+                  nodeset_idsi.append(match_nodeset)
+
+          df1 = pd.DataFrame({
+              'locution': tfrom1l,
+              'connection': tto1l,
+              'illocution': tto2l,
+              'id_locution': loc_idsl,
+              'id_connection': connect_idsl,
+              'id_illocution': illoc_idsl,
+              'nodeset_id': nodeset_idsl,
+          })
+
+          df_all_loc = pd.concat( [df_all_loc, df1], axis=0, ignore_index=True )
+
+          df2 = pd.DataFrame({
+              'premise': tfrom1i,
+              'connection': tto1i,
+              'conclusion': tto2i,
+              'id_premise': loc_idsi,
+              'id_connection': connect_idsi,
+              'id_conclusion': illoc_idsi,
+              'nodeset_id': nodeset_idsi,
+          })
+          df_all = pd.concat( [df_all, df2], axis=0, ignore_index=True )
+        except:
+          continue
+
   return df_all_loc, df_all
 
 
@@ -303,16 +406,12 @@ with st.sidebar:
             if len(uploaded_json) < 1:
                 st.stop()
             elif len(uploaded_json) > 1:
-                maps = glob.glob(r"/maps_up/*.json")
-                if len(maps) > 0:
-                    for f in maps:
-                        os.remove(f)
+                maps_dict = {}
                 for file in uploaded_json:
-                  with open(os.path.join(r"/maps_up", file.name), "wb") as f:
-                      f.write(file.getbuffer())
-                      st.write(f'{file.name} saved sucessfully')
-            maps = glob.glob(r"/maps_up/*.json")
-            df_all_loc, df_all = RetrieveNodes(maps[:], type_aif = str(type_aif).lower())
+                  fjson = json.load(file)
+                  maps_dict[str(file.name)[:-5]] = fjson
+                  st.write(f'{file.name} saved sucessfully')
+                df_all_loc, df_all = RetrieveNodes(maps_dict, from_dict = True, type_aif = str(type_aif).lower())
 
         elif own_files == 'Nodeset ID from AIF':
             nodeset_id_input = st.text_input("Insert nodeset ID from AIFb", "10453")
@@ -327,7 +426,6 @@ with st.sidebar:
                     #st.write(f'{nodeset_id_input} saved sucessfully')
                 #maps = glob.glob("/tem_maps/*.json")
                 df_all_loc, df_all = RetrieveNodesOnline(file_json_nodeset, nodeset_id_str = nodeset_id_input, type_aif = str(type_aif).lower())
-
 
 #  *********************** sidebar  *********************
 
