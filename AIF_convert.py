@@ -291,7 +291,7 @@ with st.sidebar:
     type_aif = st.radio("Choose AIF version", ('Old', 'New'))
 
     add_spacelines(2)
-    own_files_bool = st.radio('Choose corpora', ('Sample corpus', 'Insert files'))
+    own_files_bool = st.radio('Choose corpora', {'Insert files'}) # 'Sample corpus', 
     if own_files_bool == 'Sample corpus':
         df_all_loc, df_all = RetrieveNodes(maps[:], type_aif = str(type_aif).lower())
 
