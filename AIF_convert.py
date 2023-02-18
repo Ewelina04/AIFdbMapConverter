@@ -511,7 +511,7 @@ plt.show()
 sns.set(font_scale=1.45, style='whitegrid')
 stats2 = sns.catplot(kind = 'bar', data = arg_stats, x = 'Percentage', y = 'Type',
                     height = 4.5, aspect=1.8, palette=colors_rels)
-stats2.set(ylabel='', title='Connection distribution', xticks = np.arange(0, arg_stats_prc.Percentage.max()+11, 20))
+stats2.set(ylabel='', title='Connection distribution', xticks = np.arange(0, arg_stats_prc.Percentage.max()+11, 10))
 plt.show()
 
 col1_stats1, col2_stats1 = st.columns([2, 3], gap = 'small')
