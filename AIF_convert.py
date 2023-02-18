@@ -443,8 +443,13 @@ else:
 
 num_cols_args = ['id_premise', 'id_connection','id_conclusion']
 num_cols_locs = ['id_locution', 'id_connection','id_illocution']
-df_all[num_cols_args] = df_all[num_cols_args].astype('str')
-df_all_loc[num_cols_locs] = df_all_loc[num_cols_locs].astype('str')
+
+if str(type_aif).lower() == 'new':
+    df_all[num_cols_args] = df_all[num_cols_args].applymap( lambda x: str(x).replace("_", "") )
+    df_all_loc[num_cols_locs] = df_all_loc[num_cols_locs].applymap( lambda x: str(x).replace("_", "") )
+    
+df_all[num_cols_args] = df_all[num_cols_args].astype('int')
+df_all_loc[num_cols_locs] = df_all_loc[num_cols_locs].astype('int')
 
 df_1 = df_all.merge(df_all_loc[['locution', 'id_illocution']], left_on = 'id_conclusion', right_on = 'id_illocution', how='left')
 df_1 = df_1.iloc[:, :-1]
