@@ -444,12 +444,12 @@ else:
 num_cols_args = ['id_premise', 'id_connection','id_conclusion']
 num_cols_locs = ['id_locution', 'id_connection','id_illocution']
 
-if str(type_aif).lower() == 'new':
-    df_all[num_cols_args] = df_all[num_cols_args].applymap( lambda x: int( str(x).replace("_", "") ) /10000 )
-    df_all_loc[num_cols_locs] = df_all_loc[num_cols_locs].applymap( lambda x: int( str(x).replace("_", "") ) /10000 )
+#if str(type_aif).lower() == 'new':
+    #df_all[num_cols_args] = df_all[num_cols_args].applymap( lambda x: int( str(x).replace("_", "") ) /10000 )
+    #df_all_loc[num_cols_locs] = df_all_loc[num_cols_locs].applymap( lambda x: int( str(x).replace("_", "") ) /10000 )
     
-df_all[num_cols_args] = df_all[num_cols_args].astype('float')
-df_all_loc[num_cols_locs] = df_all_loc[num_cols_locs].astype('float')
+df_all[num_cols_args] = df_all[num_cols_args].astype('str')
+df_all_loc[num_cols_locs] = df_all_loc[num_cols_locs].astype('str')
 
 df_1 = df_all.merge(df_all_loc[['locution', 'id_illocution']], left_on = 'id_conclusion', right_on = 'id_illocution', how='left')
 df_1 = df_1.iloc[:, :-1]
@@ -472,9 +472,10 @@ df_2['speaker'] = np.where( (df_2['speaker'] == '') & (df_2.id_premise > df_2.id
 df_2['speaker'] = np.where( (df_2['speaker'] == '') & (df_2.id_premise < df_2.id_conclusion) , df_2['speaker_conclusion'], df_2['speaker'])
 
 #df_2 = df_2.sort_values(by = ['id_connection', 'id_premise', 'id_conclusion'])
-if str(type_aif).lower() == 'new':
-    df_all[num_cols_args] = df_all[num_cols_args].applymap( lambda x: str(x*10000) )
-    df_all_loc[num_cols_locs] = df_all_loc[num_cols_locs].applymap( lambda x: str(x*10000) )
+
+#if str(type_aif).lower() == 'new':
+    #df_all[num_cols_args] = df_all[num_cols_args].applymap( lambda x: str(x*10000) )
+    #df_all_loc[num_cols_locs] = df_all_loc[num_cols_locs].applymap( lambda x: str(x*10000) )
     
 arg_stats = pd.DataFrame(df_2.connection.value_counts().sort_values(ascending=False)).reset_index()
 arg_stats.columns = ['Type', 'Number']
