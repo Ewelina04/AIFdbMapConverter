@@ -466,10 +466,10 @@ df_2 = df_2[['locution_conclusion', 'locution_premise', 'conclusion', 'premise',
 
 df_2['speaker_conclusion'] = df_2.locution_conclusion.apply(lambda x: str(str(x).split(':')[0]).strip() )
 df_2['speaker_premise'] = df_2.locution_premise.apply(lambda x: str(str(x).split(':')[0]).strip() )
-df_2['speaker'] = df_2.apply(lambda x: x['speaker_conclusion'] in x['speaker_premise'], axis=1)
+df_2['speaker'] = df_2.apply(lambda x: x['speaker_conclusion'] == x['speaker_premise'], axis=1)
 df_2['speaker'] = np.where(df_2['speaker'] == True, df_2['speaker_conclusion'], '')
-df_2['speaker'] = np.where( (df_2['speaker'] == '') & (df_2.id_premise > df_2.id_conclusion) , df_2['speaker_premise'], df_2['speaker'])
-df_2['speaker'] = np.where( (df_2['speaker'] == '') & (df_2.id_premise < df_2.id_conclusion) , df_2['speaker_conclusion'], df_2['speaker'])
+df_2['speaker'] = np.where( (df_2['speaker'] == '') & (df_2.id_premise.str[:5] > df_2.id_conclusion.str[:5]) , df_2['speaker_premise'], df_2['speaker'])
+df_2['speaker'] = np.where( (df_2['speaker'] == '') & (df_2.id_premise.str[:5] < df_2.id_conclusion.str[:5]) , df_2['speaker_conclusion'], df_2['speaker'])
 
 #df_2 = df_2.sort_values(by = ['id_connection', 'id_premise', 'id_conclusion'])
 
