@@ -48,12 +48,16 @@ def get_graph_url(node_path):
 def RetrieveNodes(node_list, from_dict = False, type_aif='old'):
   df_all_loc = pd.DataFrame(columns = ['locution', 'connection', 'illocution', 'id_locution', 'id_connection', 'id_illocution', 'nodeset_id'])
   df_all = pd.DataFrame(columns = ['premise', 'connection', 'conclusion', 'id_premise', 'id_connection', 'id_conclusion', 'nodeset_id'])
-
+  
   if from_dict:
       for map in node_list.keys():
         try:
           match_nodeset = map
           map1 = node_list[map]
+          if 'AIF' in map1.keys():
+            type_aif = 'new'
+          else:
+            type_aif = 'old'
 
           if type_aif == 'new':
             df_nodes = pd.DataFrame(map1['AIF']['nodes'])
@@ -160,6 +164,10 @@ def RetrieveNodes(node_list, from_dict = False, type_aif='old'):
             map1 = json.load(f)
           match_nodeset = re.split('nodeset', str(map))
           match_nodeset = match_nodeset[-1][:4]
+          if 'AIF' in map1.keys():
+            type_aif = 'new'
+          else:
+            type_aif = 'old'
 
           if type_aif == 'new':
             df_nodes = pd.DataFrame(map1['AIF']['nodes'])
@@ -391,9 +399,10 @@ temp_path = os.path.join(parent_dir, directory)
 with st.sidebar:
     st.title("Parameters of analysis")
     add_spacelines(1)
-    type_aif = st.radio("Choose AIF version", ('Old', 'New'))
-
-    add_spacelines(2)
+    #type_aif = st.radio("Choose AIF version", ('Old', 'New'))
+    type_aif = 'old'
+    #add_spacelines(2)
+    
     own_files_bool = st.radio('Choose corpora', {'Insert files'}) # 'Sample corpus', 
     if own_files_bool == 'Sample corpus':
         df_all_loc, df_all = RetrieveNodes(maps[:], type_aif = str(type_aif).lower())
@@ -414,7 +423,7 @@ with st.sidebar:
                 df_all_loc, df_all = RetrieveNodes(maps_dict, from_dict = True, type_aif = str(type_aif).lower())
 
         elif own_files == 'Nodeset ID from AIF':
-            nodeset_id_input = st.text_input("Insert nodeset ID from AIFb", "10453")
+            nodeset_id_input = st.text_input("Insert nodeset ID from AIFdb", "10453")
             if len(nodeset_id_input) < 1:
                 st.stop()
             elif len(nodeset_id_input) > 1:
