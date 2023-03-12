@@ -275,6 +275,11 @@ def RetrieveNodes(node_list, from_dict = False, type_aif='old'):
 
 @st.cache(allow_output_mutation=True)
 def RetrieveNodesOnline(map1, nodeset_id_str, type_aif='old'):
+  if 'AIF' in map1.keys():
+    type_aif = 'new'
+  else:
+    type_aif = 'old'
+    
   try:
       if type_aif == 'new':
         df_nodes = pd.DataFrame(map1['AIF']['nodes'])
