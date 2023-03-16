@@ -521,6 +521,7 @@ stats_spk = sns.catplot(kind = 'bar', data = arg_stats_spk, x = 'Percentage', y 
 stats_spk.set(ylabel='', title='Speakers distribution', xticks = np.arange(0, arg_stats_prc_spk.Percentage.max()+11, 10))
 plt.show()
 
+arg_stats = arg_stats[arg_stats['Type'].isin(['Default Inference', 'Defaul Conflict', 'Default Rephrase'])]
 
 sns.set(font_scale=1.45, style='whitegrid')
 stats2 = sns.catplot(kind = 'bar', data = arg_stats, x = 'Percentage', y = 'Type',
