@@ -83,7 +83,7 @@ def RetrieveNodes(node_list, from_dict = False, type_aif='old'):
           loc_idsi = []
           illoc_idsi = []
           nodeset_idsi = []
-          rels = ['MA', 'CA', 'RA', 'PA']
+          rels = ['MA', 'CA', 'RA']
 
           for id1 in df_edge.index:
             for id2 in df_edge.index:
@@ -307,7 +307,7 @@ def RetrieveNodesOnline(map1, nodeset_id_str, type_aif='old'):
       loc_idsi = []
       illoc_idsi = []
       nodeset_idsi = []
-      rels = ['MA', 'CA', 'RA', 'PA']
+      rels = ['MA', 'CA', 'RA']
 
       for id1 in df_edge.index:
         for id2 in df_edge.index:
