@@ -413,7 +413,7 @@ with st.sidebar:
         df_all_loc, df_all = RetrieveNodes(maps[:], type_aif = str(type_aif).lower())
 
     else:
-        own_files = st.radio('Chose method of uploading files', ('Upload files', 'Nodeset ID from AIF'))
+        own_files = st.radio('Chose method of uploading files', ('Nodeset ID from AIF', 'Upload files'))
 
         if own_files == 'Upload files':
             uploaded_json = st.file_uploader('Choose files', type = 'json', accept_multiple_files = True)
