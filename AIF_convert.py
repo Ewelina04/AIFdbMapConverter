@@ -10,7 +10,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 sns.set_theme(style="whitegrid")
-plt.style.use("seaborn-talk")
+# plt.style.use("seaborn-talk") # outdated apparently 2023-09
+plt.style.use("seaborn-v0_8-talk")
 
 pd.options.mode.chained_assignment = None
 import warnings
