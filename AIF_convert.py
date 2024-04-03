@@ -7,6 +7,8 @@ from collections import Counter
 import pandas as pd
 pd.set_option("max_colwidth", 400)
 import numpy as np
+import xlsxwriter
+from io import BytesIO
 import matplotlib.pyplot as plt
 import seaborn as sns
 sns.set_theme(style="whitegrid")
@@ -590,19 +592,38 @@ st.write("### Download converted corpora")
 col1_download, col2_download = st.columns([2, 3], gap='small')
 with col1_download:
     add_spacelines(2)
-    download_type = st.radio('Choose file format', ('CSV', 'TSV'))
+    download_type = st.radio('Choose file format', ('CSV', 'TSV', 'Excel'))
     #f_extension = str(download_type).replace('Excel', 'xlsx').replace('CSV', 'csv')
-
+    
     @st.cache
     def convert_df(df, download_type = download_type):
         if download_type == 'CSV':
             return df.to_csv().encode('utf-8')
+            
+        elif download_type == 'Excel':
+            import io
+            buffer = io.BytesIO()
+            with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer: 
+                df[df.connection == 'Default Inference'].to_excel(writer, sheet_name='RA')
+                df[df.connection == 'Default Conflict'].to_excel(writer, sheet_name='CA')
+                df[df.connection == 'Default Rephrase'].to_excel(writer, sheet_name='MA')
+                writer.save()
+            return buffer            
+            
         else:
             return df.to_csv(sep='\t').encode('utf-8')
 
     file_download = convert_df(df_2)
     add_spacelines(2)
-    st.download_button(
+    if download_type == 'Excel':
+        st.download_button(
+        label="Click to download",
+        file_name=f'AIF_converted_corpora.xlsx',
+        data=buffer,
+        mime="application/vnd.ms-excel"
+    )
+    else:
+        st.download_button(
         label="Click to download",
         data=file_download,
         file_name=f'AIF_converted_corpora.csv',
