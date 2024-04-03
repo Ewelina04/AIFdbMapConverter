@@ -598,23 +598,7 @@ with col1_download:
     @st.cache
     def convert_df(df, download_type = download_type):
         if download_type == 'CSV':
-            return df.to_csv().encode('utf-8')
-            
-        elif download_type == 'Excel':
-            import io
-            buffer = io.BytesIO()
-            with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer: 
-                df[df.connection == 'Default Inference'].to_excel(writer, sheet_name='RA')
-                df[df.connection == 'Default Conflict'].to_excel(writer, sheet_name='CA')
-                df[df.connection == 'Default Rephrase'].to_excel(writer, sheet_name='MA')
-                writer.save()
-            return st.download_button(
-                        label="Click to download",
-                        file_name=f'AIF_converted_corpora.xlsx',
-                        data=buffer,
-                        mime="application/vnd.ms-excel"
-                    )            
-            
+            return df.to_csv().encode('utf-8')            
         else:
             return df.to_csv(sep='\t').encode('utf-8')
 
@@ -627,6 +611,20 @@ with col1_download:
         file_name=f'AIF_converted_corpora.csv',
         mime='text/csv',
         )
+    else:
+        import io
+        buffer = io.BytesIO()
+            with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer: 
+                df[df.connection == 'Default Inference'].to_excel(writer, sheet_name='RA')
+                df[df.connection == 'Default Conflict'].to_excel(writer, sheet_name='CA')
+                df[df.connection == 'Default Rephrase'].to_excel(writer, sheet_name='MA')
+                writer.save()
+                st.download_button(
+                        label="Click to download Excel file",
+                        file_name=f'AIF_converted_corpora.xlsx',
+                        data=buffer,
+                        mime="application/vnd.ms-excel"
+                    )
         
 
 with col2_download:
