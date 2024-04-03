@@ -588,52 +588,72 @@ df_2 = df_2.drop(columns = ['index', 'time', 'velocity'], axis = 1)
 st.write('***********************************************************************************************')
 
 
+@st.cache_data
+        def convert_df(df, download_type = download_type):
+            if download_type == 'CSV':
+                return df.to_csv().encode('utf-8')            
+            else:
+                return df.to_csv(sep='\t').encode('utf-8')
+                
 st.write("### Download converted corpora")
-col1_download, col2_download = st.columns([2, 3], gap='small')
-with col1_download:
-    add_spacelines(2)
-    download_type = st.radio('Choose file format', ('CSV', 'TSV', 'Excel'))
-    #f_extension = str(download_type).replace('Excel', 'xlsx').replace('CSV', 'csv')
-    
-    @st.cache
-    def convert_df(df, download_type = download_type):
-        if download_type == 'CSV':
-            return df.to_csv().encode('utf-8')            
-        else:
-            return df.to_csv(sep='\t').encode('utf-8')
+tab_all, tabra, tabca, tabma = st.tabs( ['All', 'Inference', 'Conflict', 'Rephrase'] )
 
-    file_download = convert_df(df_2)
-    add_spacelines(2)
-    if download_type != 'Excel':
+
+with tabra:   
+    file_download = convert_df(df_2[df_2.connection == 'Default Inference'])
+        add_spacelines(2)
         st.download_button(
-        label="Click to download",
-        data=file_download,
-        file_name=f'AIF_converted_corpora.csv',
-        mime='text/csv',
-        )
-    else:
-        import io
-        df = df_2.copy()
-        buffer = io.BytesIO()
-        with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer: 
-                df[df.connection == 'Default Inference'].to_excel(writer, sheet_name='RA').encode('utf-8')
-                df[df.connection == 'Default Conflict'].to_excel(writer, sheet_name='CA').encode('utf-8')
-                df[df.connection == 'Default Rephrase'].to_excel(writer, sheet_name='MA').encode('utf-8')
-                writer.close()
-                st.download_button(
-                        label="Click to download Excel file",
-                        file_name=f'AIF_converted_corpora.xlsx',
-                        data=buffer,
-                        mime="application/vnd.ms-excel"
-                    )
-        
+            label="Click to download Inference",
+            data=file_download,
+            file_name=f'AIF_converted_corpora.csv',
+            mime='text/csv',
+            )    
 
-with col2_download:
-    add_spacelines(2)
-    df_2.argument_linked = df_2.argument_linked.astype('int')
-    #st.dataframe(df_2.iloc[:, 2:].set_index('speaker').head(), width=850)
-    st.dataframe(df_2.set_index('speaker'), width=850)
+with tabca:   
+    file_download = convert_df(df_2[df_2.connection == 'Default Conflict'])
+        add_spacelines(2)
+        st.download_button(
+            label="Click to download Conflict",
+            data=file_download,
+            file_name=f'AIF_converted_corpora.csv',
+            mime='text/csv',
+            )    
 
+
+with tabma:   
+    file_download = convert_df(df_2[df_2.connection == 'Default Rephrase'])
+        add_spacelines(2)
+        st.download_button(
+            label="Click to download Rephrase",
+            data=file_download,
+            file_name=f'AIF_converted_corpora.csv',
+            mime='text/csv',
+            )    
+
+
+with tab_all:     
+    col1_download, col2_download = st.columns([2, 3], gap='small')
+    with col1_download:
+        add_spacelines(2)
+        download_type = st.radio('Choose file format', ('CSV', 'TSV', 'Excel'))
+        #f_extension = str(download_type).replace('Excel', 'xlsx').replace('CSV', 'csv')
+            
+    
+        file_download = convert_df(df_2)
+        add_spacelines(2)
+        st.download_button(
+            label="Click to download",
+            data=file_download,
+            file_name=f'AIF_converted_corpora.csv',
+            mime='text/csv',
+            )        
+    
+    with col2_download:
+        add_spacelines(2)
+        df_2.argument_linked = df_2.argument_linked.astype('int')
+        #st.dataframe(df_2.iloc[:, 2:].set_index('speaker').head(), width=850)
+        st.dataframe(df_2.set_index('speaker'), width=850)
+    
 
 #if own_files == 'Nodeset ID from AIF':
     #for f in maps:
