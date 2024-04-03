@@ -524,7 +524,7 @@ stats_spk = sns.catplot(kind = 'bar', data = arg_stats_spk, x = 'Percentage', y 
 stats_spk.set(ylabel='', title='Speakers distribution', xticks = np.arange(0, arg_stats_prc_spk.Percentage.max()+11, 10))
 plt.show()
 
-arg_stats = arg_stats[arg_stats['Type'].isin(['Default Inference', 'Defaul Conflict', 'Default Rephrase'])]
+arg_stats = arg_stats[arg_stats['Type'].isin(['Default Inference', 'Default Conflict', 'Default Rephrase'])]
 
 sns.set(font_scale=1.45, style='whitegrid')
 stats2 = sns.catplot(kind = 'bar', data = arg_stats, x = 'Percentage', y = 'Type',
@@ -608,27 +608,26 @@ with col1_download:
                 df[df.connection == 'Default Conflict'].to_excel(writer, sheet_name='CA')
                 df[df.connection == 'Default Rephrase'].to_excel(writer, sheet_name='MA')
                 writer.save()
-            return buffer            
+            return st.download_button(
+                        label="Click to download",
+                        file_name=f'AIF_converted_corpora.xlsx',
+                        data=buffer,
+                        mime="application/vnd.ms-excel"
+                    )            
             
         else:
             return df.to_csv(sep='\t').encode('utf-8')
 
     file_download = convert_df(df_2)
     add_spacelines(2)
-    if download_type == 'Excel':
-        st.download_button(
-        label="Click to download",
-        file_name=f'AIF_converted_corpora.xlsx',
-        data=buffer,
-        mime="application/vnd.ms-excel"
-    )
-    else:
+    if download_type != 'Excel':
         st.download_button(
         label="Click to download",
         data=file_download,
         file_name=f'AIF_converted_corpora.csv',
         mime='text/csv',
         )
+        
 
 with col2_download:
     add_spacelines(2)
