@@ -589,11 +589,12 @@ st.write('**********************************************************************
 
 
 @st.cache_data
-        def convert_df(df, download_type = download_type):
+def convert_df(df, download_type = download_type):
             if download_type == 'CSV':
                 return df.to_csv().encode('utf-8')            
             else:
                 return df.to_csv(sep='\t').encode('utf-8')
+                
                 
 st.write("### Download converted corpora")
 tab_all, tabra, tabca, tabma = st.tabs( ['All', 'Inference', 'Conflict', 'Rephrase'] )
