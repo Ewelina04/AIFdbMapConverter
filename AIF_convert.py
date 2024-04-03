@@ -619,7 +619,7 @@ with col1_download:
                 df[df.connection == 'Default Inference'].to_excel(writer, sheet_name='RA')
                 df[df.connection == 'Default Conflict'].to_excel(writer, sheet_name='CA')
                 df[df.connection == 'Default Rephrase'].to_excel(writer, sheet_name='MA')
-                writer.save()
+                #writer.save()
                 st.download_button(
                         label="Click to download Excel file",
                         file_name=f'AIF_converted_corpora.xlsx',
