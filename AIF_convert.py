@@ -603,7 +603,7 @@ with tab_all:
     col1_download, col2_download = st.columns([2, 3], gap='small')
     with col1_download:
         add_spacelines(2)
-        download_type = st.radio('Choose file format', ('CSV', 'TSV', 'Excel'))
+        download_type = st.radio('Choose file format', ('CSV', 'TSV'))
         #f_extension = str(download_type).replace('Excel', 'xlsx').replace('CSV', 'csv')
             
     
