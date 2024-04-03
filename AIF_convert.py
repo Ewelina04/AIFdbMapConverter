@@ -601,7 +601,7 @@ tab_all, tabra, tabca, tabma = st.tabs( ['All', 'Inference', 'Conflict', 'Rephra
 
 
 with tabra:   
-    file_download = convert_df(df_2[df_2.connection == 'Default Inference'])
+        file_download = convert_df(df_2[df_2.connection == 'Default Inference'])
         add_spacelines(2)
         st.download_button(
             label="Click to download Inference",
@@ -611,7 +611,7 @@ with tabra:
             )    
 
 with tabca:   
-    file_download = convert_df(df_2[df_2.connection == 'Default Conflict'])
+        file_download = convert_df(df_2[df_2.connection == 'Default Conflict'])
         add_spacelines(2)
         st.download_button(
             label="Click to download Conflict",
@@ -622,7 +622,7 @@ with tabca:
 
 
 with tabma:   
-    file_download = convert_df(df_2[df_2.connection == 'Default Rephrase'])
+        file_download = convert_df(df_2[df_2.connection == 'Default Rephrase'])
         add_spacelines(2)
         st.download_button(
             label="Click to download Rephrase",
