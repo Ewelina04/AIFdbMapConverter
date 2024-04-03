@@ -589,7 +589,7 @@ st.write('**********************************************************************
 
 
 @st.cache_data
-def convert_df(df, download_type = download_type):
+def convert_df(df, download_type):
             if download_type == 'CSV':
                 return df.to_csv().encode('utf-8')            
             else:
@@ -598,39 +598,6 @@ def convert_df(df, download_type = download_type):
                 
 st.write("### Download converted corpora")
 tab_all, tabra, tabca, tabma = st.tabs( ['All', 'Inference', 'Conflict', 'Rephrase'] )
-
-
-with tabra:   
-        file_download = convert_df(df_2[df_2.connection == 'Default Inference'])
-        add_spacelines(2)
-        st.download_button(
-            label="Click to download Inference",
-            data=file_download,
-            file_name=f'AIF_converted_corpora.csv',
-            mime='text/csv',
-            )    
-
-with tabca:   
-        file_download = convert_df(df_2[df_2.connection == 'Default Conflict'])
-        add_spacelines(2)
-        st.download_button(
-            label="Click to download Conflict",
-            data=file_download,
-            file_name=f'AIF_converted_corpora.csv',
-            mime='text/csv',
-            )    
-
-
-with tabma:   
-        file_download = convert_df(df_2[df_2.connection == 'Default Rephrase'])
-        add_spacelines(2)
-        st.download_button(
-            label="Click to download Rephrase",
-            data=file_download,
-            file_name=f'AIF_converted_corpora.csv',
-            mime='text/csv',
-            )    
-
 
 with tab_all:     
     col1_download, col2_download = st.columns([2, 3], gap='small')
@@ -655,6 +622,40 @@ with tab_all:
         #st.dataframe(df_2.iloc[:, 2:].set_index('speaker').head(), width=850)
         st.dataframe(df_2.set_index('speaker'), width=850)
     
+
+with tabra:   
+        file_download = convert_df(df_2[df_2.connection == 'Default Inference'], download_type = download_type)
+        add_spacelines(2)
+        st.download_button(
+            label="Click to download Inference",
+            data=file_download,
+            file_name=f'AIF_converted_corpora.csv',
+            mime='text/csv',
+            )    
+
+with tabca:   
+        file_download = convert_df(df_2[df_2.connection == 'Default Conflict'], download_type = download_type)
+        add_spacelines(2)
+        st.download_button(
+            label="Click to download Conflict",
+            data=file_download,
+            file_name=f'AIF_converted_corpora.csv',
+            mime='text/csv',
+            )    
+
+
+with tabma:   
+        file_download = convert_df(df_2[df_2.connection == 'Default Rephrase'], download_type = download_type)
+        add_spacelines(2)
+        st.download_button(
+            label="Click to download Rephrase",
+            data=file_download,
+            file_name=f'AIF_converted_corpora.csv',
+            mime='text/csv',
+            )    
+
+
+
 
 #if own_files == 'Nodeset ID from AIF':
     #for f in maps:
