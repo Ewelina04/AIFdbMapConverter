@@ -613,6 +613,7 @@ with col1_download:
         )
     else:
         import io
+        df = df_2.copy()
         buffer = io.BytesIO()
         with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer: 
                 df[df.connection == 'Default Inference'].to_excel(writer, sheet_name='RA')
