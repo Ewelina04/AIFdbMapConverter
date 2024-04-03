@@ -614,7 +614,7 @@ with col1_download:
     else:
         import io
         buffer = io.BytesIO()
-            with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer: 
+        with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer: 
                 df[df.connection == 'Default Inference'].to_excel(writer, sheet_name='RA')
                 df[df.connection == 'Default Conflict'].to_excel(writer, sheet_name='CA')
                 df[df.connection == 'Default Rephrase'].to_excel(writer, sheet_name='MA')
