@@ -607,7 +607,7 @@ with tab_all:
         #f_extension = str(download_type).replace('Excel', 'xlsx').replace('CSV', 'csv')
             
     
-        file_download = convert_df(df_2)
+        file_download = convert_df(df_2, download_type = download_type)
         add_spacelines(2)
         st.download_button(
             label="Click to download",
