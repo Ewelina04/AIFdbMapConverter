@@ -787,12 +787,20 @@ load_memXLSX(df_2, workbook=workbook, sheet_name="All")
 load_memXLSX(df_2[df_2.connection == 'Default Inference'], workbook=workbook, sheet_name="RA")    
 load_memXLSX(df_2[df_2.connection == 'Default Conflict'], workbook=workbook, sheet_name="CA")
 load_memXLSX(df_2[df_2.connection == 'Default Rephrase'], workbook=workbook, sheet_name="MA")
-load_memXLSX(di.reset_index(), workbook=workbook, sheet_name="Locutions")
+load_memXLSX(di, workbook=workbook, sheet_name="Locutions")
 workbook.close()
 
-st.download_button(
-    label="Click to download excel",
-    data=output.getvalue(),
-    file_name=f'AIF_all_corpora.xlsx',
-    mime='application/octet-stream',
-    )
+
+cc1, cc2 = st.columns(2)
+
+with cc2:
+    st.dataframe(df_2)
+    st.dataframe(di)
+
+with cc1:
+    st.download_button(
+        label="Click to download excel",
+        data=output.getvalue(),
+        file_name=f'AIF_all_corpora.xlsx',
+        mime='application/octet-stream',
+        )
