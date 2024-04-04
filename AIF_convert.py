@@ -236,7 +236,7 @@ def RetrieveLocutionsInodes(node_list, from_dict = False, type_aif='new'):
 
 
 
-@st.cache_data(allow_output_mutation=True)
+@st.cache_data
 def RetrieveNodes(node_list, from_dict = False, type_aif='old'):
   df_all_loc = pd.DataFrame(columns = ['locution', 'connection', 'illocution', 'id_locution', 'id_connection', 'id_illocution', 'nodeset_id'])
   df_all = pd.DataFrame(columns = ['premise', 'connection', 'conclusion', 'id_premise', 'id_connection', 'id_conclusion', 'nodeset_id'])
