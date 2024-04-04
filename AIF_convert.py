@@ -48,6 +48,195 @@ def get_graph_url(node_path):
 
 
 @st.cache(allow_output_mutation=True)
+def RetrieveLocutionsInodesOnline(map1, nodeset_id_str, type_aif='old'):
+      if 'AIF' in map1.keys():
+        type_aif = 'new'
+      else:
+        type_aif = 'old'
+        
+      try:
+          if type_aif == 'new':
+            df_nodes = pd.DataFrame(map1['AIF']['nodes'])
+            df_edge = pd.DataFrame(map1['AIF']['edges'])
+          else:
+            df_nodes = pd.DataFrame(map1['nodes'])
+            df_edge = pd.DataFrame(map1['edges'])
+    
+          match_nodeset = nodeset_id_str      
+          rels = ['MA', 'CA', 'RA']            
+    
+          tto1 = []
+          tfrom1 = []
+          tto2 = []
+          tfrom2 = []
+    
+          connect_ids = []
+          loc_ids = []
+          illoc_ids = []
+
+          for id1 in df_edge.index:
+            for id2 in df_edge.index:
+    
+              id_from1 =  df_edge.loc[id1, 'fromID']
+              id_to1 =  df_edge.loc[id1, 'toID']
+    
+              id_from2 =  df_edge.loc[id2, 'fromID']
+    
+              if id_to1 == id_from2:
+                if (df_nodes[ (df_nodes.nodeID == id_from1) ]['type'].iloc[0] == 'L') and (df_nodes[ (df_nodes.nodeID == id_to1) ]['type'].iloc[0] == 'TA'):
+                  d1 = df_nodes[ (df_nodes.nodeID == id_from1) ]
+                  d2 = df_nodes[ (df_nodes.nodeID == id_to1) ]
+    
+                  tfrom1.append(d1['text'].iloc[0])
+                  tto1.append(d2['text'].iloc[0])
+    
+                  loc_ids.append(d1['nodeID'].iloc[0])
+
+                elif (df_nodes[ (df_nodes.nodeID == id_from1) ]['type'].iloc[0] == 'TA') and (df_nodes[ (df_nodes.nodeID == id_to1) ]['type'].iloc[0] == 'L') :
+                  d1 = df_nodes[ (df_nodes.nodeID == id_from1) ]
+                  d2 = df_nodes[ (df_nodes.nodeID == id_to1) ]
+        
+                  tto1.append(d1['text'].iloc[0])
+                  tfrom1.append(d2['text'].iloc[0])    
+                  loc_ids.append(d2['nodeID'].iloc[0])
+    
+          df1 = pd.DataFrame({
+              'locution': tfrom1,
+              'id_locution': loc_ids,
+          })
+      except:
+        st.error('Error loading nodeset')
+      return df1
+
+
+
+
+# right side OVA node retrieval
+@st.cache_data
+def RetrieveLocutionsInodes(node_list, from_dict = False, type_aif='new'):
+  df_all_loc = pd.DataFrame(columns = ['locution', 'id_locution'])
+  if from_dict:
+      for map in node_list.keys():
+        try:
+          match_nodeset = map
+          map1 = node_list[map]
+    
+          if type_aif == 'new':
+            df_nodes = pd.DataFrame(map1['AIF']['nodes'])
+            df_edge = pd.DataFrame(map1['AIF']['edges'])
+          else:
+            df_nodes = pd.DataFrame(map1['nodes'])
+            df_edge = pd.DataFrame(map1['edges'])
+    
+          tto1 = []
+          tfrom1 = []
+          tto2 = []
+          tfrom2 = []
+    
+          connect_ids = []
+          loc_ids = []
+          illoc_ids = []
+
+          for id1 in df_edge.index:
+            for id2 in df_edge.index:
+    
+              id_from1 =  df_edge.loc[id1, 'fromID']
+              id_to1 =  df_edge.loc[id1, 'toID']
+    
+              id_from2 =  df_edge.loc[id2, 'fromID']
+    
+              if id_to1 == id_from2:
+                if (df_nodes[ (df_nodes.nodeID == id_from1) ]['type'].iloc[0] == 'L') and (df_nodes[ (df_nodes.nodeID == id_to1) ]['type'].iloc[0] == 'TA'):
+                  d1 = df_nodes[ (df_nodes.nodeID == id_from1) ]
+                  d2 = df_nodes[ (df_nodes.nodeID == id_to1) ]
+    
+                  tfrom1.append(d1['text'].iloc[0])
+                  tto1.append(d2['text'].iloc[0])
+    
+                  loc_ids.append(d1['nodeID'].iloc[0])
+
+                elif (df_nodes[ (df_nodes.nodeID == id_from1) ]['type'].iloc[0] == 'TA') and (df_nodes[ (df_nodes.nodeID == id_to1) ]['type'].iloc[0] == 'L') :
+                  d1 = df_nodes[ (df_nodes.nodeID == id_from1) ]
+                  d2 = df_nodes[ (df_nodes.nodeID == id_to1) ]
+        
+                  tto1.append(d1['text'].iloc[0])
+                  tfrom1.append(d2['text'].iloc[0])    
+                  loc_ids.append(d2['nodeID'].iloc[0])
+    
+          df1 = pd.DataFrame({
+              'locution': tfrom1,
+              'id_locution': loc_ids,
+          })
+          df_all_loc = pd.concat( [df_all_loc, df1], axis=0, ignore_index=True )
+    
+        except:
+          print('except')
+          continue
+
+    
+  else:
+      for map in node_list[:]:
+        try:
+          with open(map, 'r') as f:
+            map1 = json.load(f)
+    
+          if type_aif == 'new':
+            df_nodes = pd.DataFrame(map1['AIF']['nodes'])
+            df_edge = pd.DataFrame(map1['AIF']['edges'])
+          else:
+            df_nodes = pd.DataFrame(map1['nodes'])
+            df_edge = pd.DataFrame(map1['edges'])
+    
+          tto1 = []
+          tfrom1 = []
+          tto2 = []
+          tfrom2 = []
+    
+          connect_ids = []
+          loc_ids = []
+          illoc_ids = []
+
+          for id1 in df_edge.index:
+            for id2 in df_edge.index:
+    
+              id_from1 =  df_edge.loc[id1, 'fromID']
+              id_to1 =  df_edge.loc[id1, 'toID']
+    
+              id_from2 =  df_edge.loc[id2, 'fromID']
+    
+              if id_to1 == id_from2:
+                if (df_nodes[ (df_nodes.nodeID == id_from1) ]['type'].iloc[0] == 'L') and (df_nodes[ (df_nodes.nodeID == id_to1) ]['type'].iloc[0] == 'TA'):
+                  d1 = df_nodes[ (df_nodes.nodeID == id_from1) ]
+                  d2 = df_nodes[ (df_nodes.nodeID == id_to1) ]
+    
+                  tfrom1.append(d1['text'].iloc[0])
+                  tto1.append(d2['text'].iloc[0])
+    
+                  loc_ids.append(d1['nodeID'].iloc[0])
+
+                elif (df_nodes[ (df_nodes.nodeID == id_from1) ]['type'].iloc[0] == 'TA') and (df_nodes[ (df_nodes.nodeID == id_to1) ]['type'].iloc[0] == 'L') :
+                  d1 = df_nodes[ (df_nodes.nodeID == id_from1) ]
+                  d2 = df_nodes[ (df_nodes.nodeID == id_to1) ]
+        
+                  tto1.append(d1['text'].iloc[0])
+                  tfrom1.append(d2['text'].iloc[0])    
+                  loc_ids.append(d2['nodeID'].iloc[0])
+    
+          df1 = pd.DataFrame({
+              'locution': tfrom1,
+              'id_locution': loc_ids,
+          })
+          df_all_loc = pd.concat( [df_all_loc, df1], axis=0, ignore_index=True )
+    
+        except:
+          print('except')
+          continue
+
+  return df_all_loc
+
+
+
+@st.cache_data(allow_output_mutation=True)
 def RetrieveNodes(node_list, from_dict = False, type_aif='old'):
   df_all_loc = pd.DataFrame(columns = ['locution', 'connection', 'illocution', 'id_locution', 'id_connection', 'id_illocution', 'nodeset_id'])
   df_all = pd.DataFrame(columns = ['premise', 'connection', 'conclusion', 'id_premise', 'id_connection', 'id_conclusion', 'nodeset_id'])
@@ -429,6 +618,8 @@ with st.sidebar:
                   maps_dict[str(file.name)[:-5]] = fjson
                   st.write(f'{file.name} saved sucessfully')
                 df_all_loc, df_all = RetrieveNodes(maps_dict, from_dict = True, type_aif = str(type_aif).lower())
+                di = RetrieveLocutionsInodes(maps_dict, from_dict = True, type_aif = str(type_aif).lower())
+                di = di.drop_duplicates()
 
         elif own_files == 'Nodeset ID from AIF':
             nodeset_id_input = st.text_input("Insert nodeset ID from AIFdb", "10453")
@@ -443,6 +634,8 @@ with st.sidebar:
                     #st.write(f'{nodeset_id_input} saved sucessfully')
                 #maps = glob.glob("/tem_maps/*.json")
                 df_all_loc, df_all = RetrieveNodesOnline(file_json_nodeset, nodeset_id_str = nodeset_id_input, type_aif = str(type_aif).lower())
+                di = RetrieveLocutionsInodesOnline( file_json_nodeset, nodeset_id_str = nodeset_id_input, type_aif = str(type_aif).lower() )
+                di = di.drop_duplicates()
 
 #  *********************** sidebar  *********************
 
@@ -602,6 +795,7 @@ load_memXLSX(df_2, workbook=workbook, sheet_name="All")
 load_memXLSX(df_2[df_2.connection == 'Default Inference'], workbook=workbook, sheet_name="RA")    
 load_memXLSX(df_2[df_2.connection == 'Default Conflict'], workbook=workbook, sheet_name="CA")
 load_memXLSX(df_2[df_2.connection == 'Default Rephrase'], workbook=workbook, sheet_name="MA")
+load_memXLSX(di, workbook=workbook, sheet_name="Locutions")
 workbook.close()
 
 st.download_button(
