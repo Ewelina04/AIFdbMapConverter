@@ -627,7 +627,7 @@ with st.sidebar:
                 df_all_loc, df_all = RetrieveNodes(maps_dict, from_dict = True, type_aif = str(type_aif).lower())
                 di = df_all_loc.copy()
                 di['speaker'] = di.locution.apply(lambda x: str(x).split(":")[0])                
-                di['speaker'] = di.locution.apply(lambda x: " ".join( str(x).split(":")[1:]))
+                di['locution'] = di.locution.apply(lambda x: " ".join( str(x).split(":")[1:]))
                 di = di.drop_duplicates()
 
         elif own_files == 'Nodeset ID from AIF':
@@ -645,7 +645,7 @@ with st.sidebar:
                 df_all_loc, df_all = RetrieveNodesOnline(file_json_nodeset, nodeset_id_str = nodeset_id_input, type_aif = str(type_aif).lower())
                 di = df_all_loc.copy()
                 di['speaker'] = di.locution.apply(lambda x: str(x).split(":")[0])  
-                di['speaker'] = di.locution.apply(lambda x: " ".join( str(x).split(":")[1:]))                
+                di['locution'] = di.locution.apply(lambda x: " ".join( str(x).split(":")[1:]))                
                 di = di.drop_duplicates()
 
 #  *********************** sidebar  *********************
