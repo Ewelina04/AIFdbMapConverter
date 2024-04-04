@@ -625,7 +625,7 @@ with st.sidebar:
                   maps_dict[str(file.name)[:-5]] = fjson
                   st.write(f'{file.name} saved sucessfully')
                 df_all_loc, df_all = RetrieveNodes(maps_dict, from_dict = True, type_aif = str(type_aif).lower())
-                di = RetrieveLocutionsInodes(maps_dict, from_dict = True, type_aif = str(type_aif).lower())
+                di = df_all_loc.copy()
                 di = di.drop_duplicates()
 
         elif own_files == 'Nodeset ID from AIF':
@@ -641,7 +641,7 @@ with st.sidebar:
                     #st.write(f'{nodeset_id_input} saved sucessfully')
                 #maps = glob.glob("/tem_maps/*.json")
                 df_all_loc, df_all = RetrieveNodesOnline(file_json_nodeset, nodeset_id_str = nodeset_id_input, type_aif = str(type_aif).lower())
-                di = RetrieveLocutionsInodesOnline( file_json_nodeset, nodeset_id_str = nodeset_id_input, type_aif = str(type_aif).lower() )
+                di = df_all_loc.copy()
                 di = di.drop_duplicates()
 
 #  *********************** sidebar  *********************
