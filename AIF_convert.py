@@ -245,7 +245,7 @@ def RetrieveLocutionsInodes(node_list, from_dict = False, type_aif='new'):
 
 @st.cache_data
 def RetrieveNodes(node_list, from_dict = False, type_aif='old'):
-  df_all_loc = pd.DataFrame(columns = ['locution', 'connection', 'illocution', 'id_locution', 'id_connection', 'id_illocution', 'nodeset_id'])
+  df_all_loc = pd.DataFrame(columns = ['locution', 'connection', 'content', 'id_locution', 'id_connection', 'id_content', 'nodeset_id'])
   df_all = pd.DataFrame(columns = ['premise', 'connection', 'conclusion', 'id_premise', 'id_connection', 'id_conclusion', 'nodeset_id'])
   
   if from_dict:
@@ -336,10 +336,10 @@ def RetrieveNodes(node_list, from_dict = False, type_aif='old'):
           df1 = pd.DataFrame({
               'locution': tfrom1l,
               'connection': tto1l,
-              'illocution': tto2l,
+              'content': tto2l,
               'id_locution': loc_idsl,
               'id_connection': connect_idsl,
-              'id_illocution': illoc_idsl,
+              'id_content': illoc_idsl,
               'nodeset_id': nodeset_idsl,
           })
           df_all_loc = pd.concat( [df_all_loc, df1], axis=0, ignore_index=True )
@@ -446,10 +446,10 @@ def RetrieveNodes(node_list, from_dict = False, type_aif='old'):
           df1 = pd.DataFrame({
               'locution': tfrom1l,
               'connection': tto1l,
-              'illocution': tto2l,
+              'content': tto2l,
               'id_locution': loc_idsl,
               'id_connection': connect_idsl,
-              'id_illocution': illoc_idsl,
+              'id_content': illoc_idsl,
               'nodeset_id': nodeset_idsl,
           })
 
@@ -560,10 +560,10 @@ def RetrieveNodesOnline(map1, nodeset_id_str, type_aif='old'):
       df_all_loc = pd.DataFrame({
           'locution': tfrom1l,
           'connection': tto1l,
-          'illocution': tto2l,
+          'content': tto2l,
           'id_locution': loc_idsl,
           'id_connection': connect_idsl,
-          'id_illocution': illoc_idsl,
+          'id_content': illoc_idsl,
           'nodeset_id': nodeset_idsl})
 
       df_all = pd.DataFrame({
@@ -659,18 +659,18 @@ else:
     df_all['argument_linked'] = False
 
 num_cols_args = ['id_premise', 'id_connection','id_conclusion']
-num_cols_locs = ['id_locution', 'id_connection','id_illocution']
+num_cols_locs = ['id_locution', 'id_connection','id_content']
 
 
 df_all[num_cols_args] = df_all[num_cols_args].astype('str')
 df_all_loc[num_cols_locs] = df_all_loc[num_cols_locs].astype('str')
 
-df_1 = df_all.merge(df_all_loc[['locution', 'id_illocution']], left_on = 'id_conclusion', right_on = 'id_illocution', how='left')
+df_1 = df_all.merge(df_all_loc[['locution', 'id_content']], left_on = 'id_conclusion', right_on = 'id_content', how='left')
 df_1 = df_1.iloc[:, :-1]
 df_1.columns = ['premise', 'connection', 'conclusion', 'id_premise', 'id_connection',
                 'id_conclusion', 'nodeset_id', 'argument_linked', 'locution_conclusion']
 
-df_2 = df_1.merge(df_all_loc[['locution', 'id_illocution']], left_on = 'id_premise', right_on = 'id_illocution', how='left')
+df_2 = df_1.merge(df_all_loc[['locution', 'id_content']], left_on = 'id_premise', right_on = 'id_content', how='left')
 df_2 = df_2.iloc[:, :-1]
 df_2.columns = ['premise', 'connection', 'conclusion', 'id_premise', 'id_connection',
                 'id_conclusion', 'nodeset_id', 'argument_linked', 'locution_conclusion', 'locution_premise']
@@ -782,6 +782,7 @@ st.write("### Download converted corpora")
 
 output = BytesIO()
 workbook = xlsxwriter.Workbook(output, {'in_memory': True})
+di = di.rename( columns = {'connection':'force', 'id_connection':'id_force'} )
 
 load_memXLSX(df_2, workbook=workbook, sheet_name="All")    
 load_memXLSX(df_2[df_2.connection == 'Default Inference'], workbook=workbook, sheet_name="RA")    
