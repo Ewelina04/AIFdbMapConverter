@@ -787,6 +787,8 @@ st.write("### Download converted corpora")
 output = BytesIO()
 workbook = xlsxwriter.Workbook(output, {'in_memory': True})
 di = di.rename( columns = {'connection':'force', 'id_connection':'id_force'} )
+df_2['locution_conclusion'] = df_2.locution_conclusion.apply(lambda x: " ".join( str(x).split(":")[1:]))   
+df_2['locution_premise'] = df_2.locution_premise.apply(lambda x: " ".join( str(x).split(":")[1:]))   
 
 load_memXLSX(df_2, workbook=workbook, sheet_name="All")    
 load_memXLSX(df_2[df_2.connection == 'Default Inference'], workbook=workbook, sheet_name="RA")    
