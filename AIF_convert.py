@@ -69,7 +69,7 @@ def RetrieveLocutionsInodesOnline(map1, nodeset_id_str, type_aif='old'):
           tfrom1 = []
           tto2 = []
           tfrom2 = []
-    
+          nodeset_idsl = []
           connect_ids = []
           loc_ids = []
           illoc_ids = []
@@ -89,7 +89,7 @@ def RetrieveLocutionsInodesOnline(map1, nodeset_id_str, type_aif='old'):
     
                   tfrom1.append(d1['text'].iloc[0])
                   tto1.append(d2['text'].iloc[0])
-    
+                  nodeset_idsl.append( match_nodeset ) 
                   loc_ids.append(d1['nodeID'].iloc[0])
 
                 elif (df_nodes[ (df_nodes.nodeID == id_from1) ]['type'].iloc[0] == 'TA') and (df_nodes[ (df_nodes.nodeID == id_to1) ]['type'].iloc[0] == 'L') :
@@ -97,12 +97,15 @@ def RetrieveLocutionsInodesOnline(map1, nodeset_id_str, type_aif='old'):
                   d2 = df_nodes[ (df_nodes.nodeID == id_to1) ]
         
                   tto1.append(d1['text'].iloc[0])
-                  tfrom1.append(d2['text'].iloc[0])    
+                  tfrom1.append(d2['text'].iloc[0])   
+                  nodeset_idsl.append( match_nodeset ) 
                   loc_ids.append(d2['nodeID'].iloc[0])
-    
+
+          
           df1 = pd.DataFrame({
               'locution': tfrom1,
               'id_locution': loc_ids,
+              'nodeset_id': nodeset_idsl,
           })
       except:
         st.error('Error loading nodeset')
@@ -114,7 +117,7 @@ def RetrieveLocutionsInodesOnline(map1, nodeset_id_str, type_aif='old'):
 # right side OVA node retrieval
 @st.cache_data
 def RetrieveLocutionsInodes(node_list, from_dict = False, type_aif='new'):
-  df_all_loc = pd.DataFrame(columns = ['locution', 'id_locution'])
+  df_all_loc = pd.DataFrame(columns = ['locution', 'id_locution', 'nodeset_id' ]) # 'nodeset_id': nodeset_idsl,
   if from_dict:
       for map in node_list.keys():
         try:
@@ -132,6 +135,7 @@ def RetrieveLocutionsInodes(node_list, from_dict = False, type_aif='new'):
           tfrom1 = []
           tto2 = []
           tfrom2 = []
+          nodeset_idsl = []
     
           connect_ids = []
           loc_ids = []
@@ -152,7 +156,7 @@ def RetrieveLocutionsInodes(node_list, from_dict = False, type_aif='new'):
     
                   tfrom1.append(d1['text'].iloc[0])
                   tto1.append(d2['text'].iloc[0])
-    
+                  nodeset_idsl.append( match_nodeset ) 
                   loc_ids.append(d1['nodeID'].iloc[0])
 
                 elif (df_nodes[ (df_nodes.nodeID == id_from1) ]['type'].iloc[0] == 'TA') and (df_nodes[ (df_nodes.nodeID == id_to1) ]['type'].iloc[0] == 'L') :
@@ -161,11 +165,13 @@ def RetrieveLocutionsInodes(node_list, from_dict = False, type_aif='new'):
         
                   tto1.append(d1['text'].iloc[0])
                   tfrom1.append(d2['text'].iloc[0])    
+                  nodeset_idsl.append( match_nodeset ) 
                   loc_ids.append(d2['nodeID'].iloc[0])
     
           df1 = pd.DataFrame({
               'locution': tfrom1,
               'id_locution': loc_ids,
+              'nodeset_id': nodeset_idsl,
           })
           df_all_loc = pd.concat( [df_all_loc, df1], axis=0, ignore_index=True )
     
@@ -225,6 +231,7 @@ def RetrieveLocutionsInodes(node_list, from_dict = False, type_aif='new'):
           df1 = pd.DataFrame({
               'locution': tfrom1,
               'id_locution': loc_ids,
+              'nodeset_id': nodeset_idsl,
           })
           df_all_loc = pd.concat( [df_all_loc, df1], axis=0, ignore_index=True )
     
@@ -654,10 +661,7 @@ else:
 num_cols_args = ['id_premise', 'id_connection','id_conclusion']
 num_cols_locs = ['id_locution', 'id_connection','id_illocution']
 
-#if str(type_aif).lower() == 'new':
-    #df_all[num_cols_args] = df_all[num_cols_args].applymap( lambda x: int( str(x).replace("_", "") ) /10000 )
-    #df_all_loc[num_cols_locs] = df_all_loc[num_cols_locs].applymap( lambda x: int( str(x).replace("_", "") ) /10000 )
-    
+
 df_all[num_cols_args] = df_all[num_cols_args].astype('str')
 df_all_loc[num_cols_locs] = df_all_loc[num_cols_locs].astype('str')
 
@@ -681,12 +685,6 @@ df_2['speaker'] = np.where(df_2['speaker'] == True, df_2['speaker_conclusion'], 
 df_2['speaker'] = np.where( (df_2['speaker'] == '') & (df_2.id_premise > df_2.id_conclusion) , df_2['speaker_premise'], df_2['speaker'])
 df_2['speaker'] = np.where( (df_2['speaker'] == '') & (df_2.id_premise < df_2.id_conclusion) , df_2['speaker_conclusion'], df_2['speaker'])
 
-#df_2 = df_2.sort_values(by = ['id_connection', 'id_premise', 'id_conclusion'])
-
-#if str(type_aif).lower() == 'new':
-    #df_all[num_cols_args] = df_all[num_cols_args].applymap( lambda x: str(x*10000) )
-    #df_all_loc[num_cols_locs] = df_all_loc[num_cols_locs].applymap( lambda x: str(x*10000) )
-    
 arg_stats = pd.DataFrame(df_2.connection.value_counts().sort_values(ascending=False)).reset_index()
 arg_stats.columns = ['Type', 'Number']
 arg_stats_prc = pd.DataFrame(df_2.connection.value_counts(normalize=True).round(3).sort_values(ascending=False)*100).reset_index()
@@ -697,12 +695,6 @@ arg_stats = pd.concat( [arg_stats, arg_stats_prc.iloc[:, -1:]], axis=1 )
 colors_rels = {
     'Default Inference':'darkblue', 'Default Rephrase':'gold', 'Default Conflict':'darkred',
 }
-
-#stats1 = sns.catplot(kind = 'bar', data = arg_stats, x = 'Number', y = 'Type',
-                    #height = 4.5, aspect=1.8, palette=colors_rels)
-#stats1.set(ylabel='')
-#plt.show()
-#fig, ax = plt.subplots(figsize = (11, 6))
 
 arg_stats_spk = pd.DataFrame(df_2.speaker.value_counts().sort_values(ascending=False)).reset_index()
 arg_stats_spk.columns = ['Speaker', 'Number']
@@ -795,7 +787,7 @@ load_memXLSX(df_2, workbook=workbook, sheet_name="All")
 load_memXLSX(df_2[df_2.connection == 'Default Inference'], workbook=workbook, sheet_name="RA")    
 load_memXLSX(df_2[df_2.connection == 'Default Conflict'], workbook=workbook, sheet_name="CA")
 load_memXLSX(df_2[df_2.connection == 'Default Rephrase'], workbook=workbook, sheet_name="MA")
-load_memXLSX(di, workbook=workbook, sheet_name="Locutions")
+load_memXLSX(di.reset_index(), workbook=workbook, sheet_name="Locutions")
 workbook.close()
 
 st.download_button(
