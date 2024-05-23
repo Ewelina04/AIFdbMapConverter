@@ -797,6 +797,14 @@ load_memXLSX(df_2[df_2.connection == 'Default Rephrase'], workbook=workbook, she
 load_memXLSX(di, workbook=workbook, sheet_name="Locutions")
 workbook.close()
 
+@st.cache_data
+def convert_df(df, download_type):
+            if download_type == 'CSV':
+                return df.to_csv().encode('utf-8')            
+            else:
+                return df.to_csv(sep='\t').encode('utf-8')
+                
+
 
 cc1, cc2 = st.columns(2)
 
@@ -805,9 +813,32 @@ with cc2:
     st.dataframe(di)
 
 with cc1:
+    st.write("Excel")
     st.download_button(
         label="Click to download excel",
         data=output.getvalue(),
         file_name=f'AIF_all_corpora.xlsx',
         mime='application/octet-stream',
         )
+
+
+    st.write("CSV")
+    download_type = 'CSV'
+    file_download = convert_df(di, download_type = download_type)
+        add_spacelines(2)
+        st.download_button(
+            label="Download Locutions",
+            data=file_download,
+            file_name=f'Locutions_converted_corpora.csv',
+            mime='text/csv',
+            )  
+
+    
+    file_download = convert_df(df_2, download_type = download_type)
+        add_spacelines(2)
+        st.download_button(
+            label="Download Logos",
+            data=file_download,
+            file_name=f'Logos_converted_corpora.csv',
+            mime='text/csv',
+            )  
