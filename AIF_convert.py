@@ -790,6 +790,9 @@ di = di.rename( columns = {'connection':'force', 'id_connection':'id_force'} )
 df_2['locution_conclusion'] = df_2.locution_conclusion.apply(lambda x: " ".join( str(x).split(":")[1:]))   
 df_2['locution_premise'] = df_2.locution_premise.apply(lambda x: " ".join( str(x).split(":")[1:]))   
 
+df_2 = df_2.drop_duplicates()
+df_2 = df_2.reset_index(drop=True)
+
 load_memXLSX(df_2, workbook=workbook, sheet_name="All")    
 load_memXLSX(df_2[df_2.connection == 'Default Inference'], workbook=workbook, sheet_name="RA")    
 load_memXLSX(df_2[df_2.connection == 'Default Conflict'], workbook=workbook, sheet_name="CA")
@@ -821,11 +824,10 @@ with cc1:
         mime='application/octet-stream',
         )
 
-
+    add_spacelines(2)
     st.write("CSV")
     download_type = 'CSV'
     file_download = convert_df(di, download_type = download_type)
-    add_spacelines(2)
     st.download_button(
             label="Download Locutions",
             data=file_download,
@@ -835,7 +837,7 @@ with cc1:
 
     
     file_download = convert_df(df_2, download_type = download_type)
-    add_spacelines(2)
+    add_spacelines(1)
     st.download_button(
             label="Download Logos",
             data=file_download,
