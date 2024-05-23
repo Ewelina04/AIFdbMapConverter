@@ -825,8 +825,8 @@ with cc1:
     st.write("CSV")
     download_type = 'CSV'
     file_download = convert_df(di, download_type = download_type)
-        add_spacelines(2)
-        st.download_button(
+    add_spacelines(2)
+    st.download_button(
             label="Download Locutions",
             data=file_download,
             file_name=f'Locutions_converted_corpora.csv',
@@ -835,8 +835,8 @@ with cc1:
 
     
     file_download = convert_df(df_2, download_type = download_type)
-        add_spacelines(2)
-        st.download_button(
+    add_spacelines(2)
+    st.download_button(
             label="Download Logos",
             data=file_download,
             file_name=f'Logos_converted_corpora.csv',
