@@ -17,7 +17,7 @@ plt.style.use("seaborn-v0_8-talk")
 
 pd.options.mode.chained_assignment = None
 import warnings
-warnings.filterwarnings("ignore", category=np.VisibleDeprecationWarning)
+#warnings.filterwarnings("ignore", category=np.VisibleDeprecationWarning)
 
 import glob
 import json
