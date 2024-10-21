@@ -655,6 +655,7 @@ with st.sidebar:
 #  *********************** PAGE content  *********************
 
 #st.dataframe(df_all)
+st.dataframe(df_all)
 ids_linked = df_all[df_all.id_connection.duplicated()].id_connection.unique()
 if len(ids_linked) > 0:
     df_all.loc[df_all.id_connection.isin(ids_linked), 'argument_linked'] = True
